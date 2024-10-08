@@ -28,6 +28,7 @@ export async function createReport({
       fileUrl,
       fileId,
     });
+    const reports = await Report.find({}, 'fileId');
 
     await User.findOneAndUpdate(
       { email: author }, // Find the user by email
@@ -60,5 +61,22 @@ export async function fetchReport(fileId: string) {
   } catch (error: any) {
     console.error(`Error fetching report: ${error}`);
     throw new Error("Error fetching report");
+  }
+}
+
+// Also, make sure fetchAllReportIds is exported
+export async function fetchAllReportIds() {
+  try {
+    // Connect to the database
+    await connectToDB();
+
+    // Fetch all reports and return their fileId fields
+    const reports = await Report.find({}, 'fileId'); // Only return the fileId field
+
+    // Map through the results to extract fileIds
+    return reports.map((report) => report.fileId);
+  } catch (error: any) {
+    console.error(`Error fetching report IDs: ${error.message}`);
+    throw new Error("Error fetching report IDs");
   }
 }
